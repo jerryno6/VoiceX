@@ -8,7 +8,8 @@
 
 当前仓库的发布方式是：
 
-- macOS 安装包在本地构建，使用 `pnpm mac:build-local`
+- macOS 安装包在本地构建，使用 `pnpm mac:build-universal`（通用二进制，同时支持 Intel 和 Apple Silicon）
+- 本地快速迭代可使用 `pnpm mac:build-local`（仅当前机器架构）
 - 每次正式 release 都必须创建 GitHub Release，并把 macOS 安装包上传到该 Release
 - Windows 安装包通过 GitHub Actions 构建并上传到 GitHub Release
 - 发布前通常会更新 `CHANGELOG.md`
@@ -106,7 +107,7 @@ cd ..
 在 macOS 上执行：
 
 ```bash
-pnpm mac:build-local
+pnpm mac:build-universal
 ```
 
 说明：
@@ -114,8 +115,15 @@ pnpm mac:build-local
 - 该命令会构建 Release 版本
 - 使用本地签名身份进行签名
 - 安装到 `/Applications/VoiceX.app`
-- 默认还会产出可上传到 GitHub Release 的 macOS 安装包，通常位于 `src-tauri/target/release/bundle/dmg/`
-- 适合当前项目的本地 macOS 发包方式
+- 产出通用二进制（universal）安装包，同时支持 Intel 和 Apple Silicon Mac
+- 默认还会产出可上传到 GitHub Release 的 macOS 安装包，通常位于 `src-tauri/target/universal-apple-darwin/release/bundle/dmg/`
+- 文件名格式为 `VoiceX_X.Y.Z_universal.dmg`
+
+如果仅需快速迭代（不构建通用二进制），可使用：
+
+```bash
+pnpm mac:build-local
+```
 
 如果本机尚未准备本地签名身份，先执行一次：
 
@@ -160,7 +168,7 @@ git push origin vX.Y.Z
 
 ```bash
 gh release create vX.Y.Z --title "vX.Y.Z" --notes-file /path/to/release-notes.md
-gh release upload vX.Y.Z /path/to/VoiceX_X.Y.Z_aarch64.dmg --clobber
+gh release upload vX.Y.Z /path/to/VoiceX_X.Y.Z_universal.dmg --clobber
 ```
 
 要求：
@@ -205,7 +213,7 @@ gh release upload vX.Y.Z /path/to/VoiceX_X.Y.Z_aarch64.dmg --clobber
 - 三处版本号已同步
 - `CHANGELOG.md` 已更新
 - README 是否需要更新已确认
-- macOS 已执行 `pnpm mac:build-local`
+- macOS 已执行 `pnpm mac:build-universal`（或 `pnpm mac:build-local` 用于快速迭代）
 - macOS 安装包已实际上传到 GitHub Release
 - release commit 已创建
 - tag 已创建并 push
@@ -218,6 +226,6 @@ gh release upload vX.Y.Z /path/to/VoiceX_X.Y.Z_aarch64.dmg --clobber
 - tag 格式使用 `vX.Y.Z`
 - release commit 建议使用 `chore: release vX.Y.Z`
 - changelog 继续沿用现有 Keep a Changelog 风格
-- macOS 继续采用本地构建与本地签名流程
+- macOS 继续采用本地构建与本地签名流程，正式 release 使用 `pnpm mac:build-universal` 产出通用二进制
 - 每次正式 release 都要在 GitHub 上创建对应 Release，并上传 macOS 安装包
 - Windows 继续采用 GitHub Actions 自动构建上传流程
