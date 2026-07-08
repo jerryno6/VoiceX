@@ -25,6 +25,7 @@ const ASR_DISPLAY_NAMES: Record<string, string> = {
   openai: 'OpenAI',
   soniox: 'Soniox',
   stepaudio: 'StepAudio',
+  mimo: 'MiMo',
   coli: 'coli (local)'
 }
 

@@ -17,6 +17,7 @@ import AsrOpenAISettings from '../components/asr/AsrOpenAISettings.vue'
 import AsrElevenLabsSettings from '../components/asr/AsrElevenLabsSettings.vue'
 import AsrSonioxSettings from '../components/asr/AsrSonioxSettings.vue'
 import AsrStepAudioSettings from '../components/asr/AsrStepAudioSettings.vue'
+import AsrMimoSettings from '../components/asr/AsrMimoSettings.vue'
 import AsrColiSettings from '../components/asr/AsrColiSettings.vue'
 
 const settingsStore = useSettingsStore()
@@ -94,6 +95,7 @@ const isOpenAI = computed(() => settingsStore.settings.asrProviderType === 'open
 const isElevenLabs = computed(() => settingsStore.settings.asrProviderType === 'elevenlabs')
 const isSoniox = computed(() => settingsStore.settings.asrProviderType === 'soniox')
 const isStepAudio = computed(() => settingsStore.settings.asrProviderType === 'stepaudio')
+const isMimo = computed(() => settingsStore.settings.asrProviderType === 'mimo')
 const isColi = computed(() => settingsStore.settings.asrProviderType === 'coli')
 const diagnosticsEnabled = computed(() => settingsStore.settings.enableDiagnostics)
 
@@ -336,6 +338,7 @@ async function clearSonioxDebugOverrides() {
     <AsrElevenLabsSettings v-if="isElevenLabs" />
     <AsrSonioxSettings v-if="isSoniox" />
     <AsrStepAudioSettings v-if="isStepAudio" />
+    <AsrMimoSettings v-if="isMimo" />
     <AsrColiSettings
       v-if="isColi"
       :coli-status="coliStatus"

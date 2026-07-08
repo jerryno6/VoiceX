@@ -1035,6 +1035,10 @@ fn select_batch_audio_path(state: &AppState, config: &AsrConfig) -> Option<PathB
         // These batch providers accept ogg/opus directly. Prefer the compressed
         // capture artifact over the temporary refinement WAV.
         AsrProviderType::Qwen | AsrProviderType::StepAudio => opus_path.or(refinement_path),
+        // MiMo only accepts wav/mp3 and caps input at 10 MB, but its client
+        // transcodes the Opus capture to compact 16 kHz mono MP3. Prefer that
+        // over the much larger 48 kHz refinement WAV.
+        AsrProviderType::Mimo => opus_path.or(refinement_path),
         _ => refinement_path.or(opus_path),
     }
 }

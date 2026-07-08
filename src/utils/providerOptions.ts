@@ -31,7 +31,8 @@ const ASR_PROVIDER_LABEL_KEYS: Array<{ key: string; value: Exclude<AsrProviderVa
   { key: 'asr.providerOpenAI', value: 'openai' },
   { key: 'asr.providerElevenLabs', value: 'elevenlabs' },
   { key: 'asr.providerSoniox', value: 'soniox' },
-  { key: 'asr.providerStepAudio', value: 'stepaudio' }
+  { key: 'asr.providerStepAudio', value: 'stepaudio' },
+  { key: 'asr.providerMimo', value: 'mimo' }
 ]
 
 const ELEVENLABS_RECOGNITION_MODE_LABEL_KEYS: Array<{

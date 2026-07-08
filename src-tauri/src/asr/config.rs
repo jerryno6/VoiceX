@@ -16,6 +16,7 @@ pub enum AsrProviderType {
     ElevenLabs,
     Soniox,
     StepAudio,
+    Mimo,
     Coli,
 }
 
@@ -39,6 +40,7 @@ impl AsrProviderType {
             Self::ElevenLabs => "ElevenLabs",
             Self::Soniox => "Soniox",
             Self::StepAudio => "StepAudio",
+            Self::Mimo => "MiMo",
             Self::Coli => "coli",
         }
     }
@@ -217,6 +219,12 @@ pub struct AsrConfig {
     pub stepaudio_base_url: String,
     pub stepaudio_language: String,
 
+    // Xiaomi MiMo ASR settings
+    pub mimo_api_key: String,
+    pub mimo_model: String,
+    pub mimo_base_url: String,
+    pub mimo_language: String,
+
     // Local ASR via `coli`
     pub coli_command_path: String,
     pub coli_use_vad: bool,
@@ -305,6 +313,10 @@ impl Default for AsrConfig {
             stepaudio_model: "stepaudio-2.5-asr".to_string(),
             stepaudio_base_url: "https://api.stepfun.com/v1".to_string(),
             stepaudio_language: "auto".to_string(),
+            mimo_api_key: String::new(),
+            mimo_model: "mimo-v2.5-asr".to_string(),
+            mimo_base_url: "https://api.xiaomimimo.com/v1".to_string(),
+            mimo_language: "auto".to_string(),
             coli_command_path: String::new(),
             coli_use_vad: true,
             coli_asr_interval_ms: 1000,
@@ -342,6 +354,7 @@ impl From<&crate::commands::settings::AppSettings> for AsrConfig {
             "elevenlabs" => AsrProviderType::ElevenLabs,
             "soniox" => AsrProviderType::Soniox,
             "stepaudio" => AsrProviderType::StepAudio,
+            "mimo" => AsrProviderType::Mimo,
             "coli" => AsrProviderType::Coli,
             _ => AsrProviderType::Volcengine,
         };
@@ -405,6 +418,10 @@ impl From<&crate::commands::settings::AppSettings> for AsrConfig {
             stepaudio_model: settings.stepaudio_model.clone(),
             stepaudio_base_url: settings.stepaudio_base_url.clone(),
             stepaudio_language: settings.stepaudio_language.clone(),
+            mimo_api_key: settings.mimo_api_key.clone(),
+            mimo_model: settings.mimo_model.clone(),
+            mimo_base_url: settings.mimo_base_url.clone(),
+            mimo_language: settings.mimo_language.clone(),
             coli_command_path: settings.coli_command_path.clone(),
             coli_use_vad: settings.coli_use_vad,
             coli_asr_interval_ms: settings.coli_asr_interval_ms,
@@ -533,6 +550,12 @@ impl AsrConfig {
                 supports_batch: true,
                 supports_post_recording_batch_refine: false,
             },
+            AsrProviderType::Mimo => AsrProviderCapabilities {
+                supports_realtime: false,
+                supports_realtime_with_final_pass: false,
+                supports_batch: true,
+                supports_post_recording_batch_refine: false,
+            },
             AsrProviderType::Coli => AsrProviderCapabilities {
                 supports_realtime: true,
                 supports_realtime_with_final_pass: true,
@@ -587,6 +610,7 @@ impl AsrConfig {
             AsrProviderType::ElevenLabs => AsrPipelineMode::Realtime,
             AsrProviderType::Soniox => AsrPipelineMode::Realtime,
             AsrProviderType::StepAudio => AsrPipelineMode::Batch,
+            AsrProviderType::Mimo => AsrPipelineMode::Batch,
             AsrProviderType::Coli if !self.coli_realtime => AsrPipelineMode::Batch,
             AsrProviderType::Coli
                 if self.coli_final_refinement_mode != crate::asr::ColiRefinementMode::Off =>
@@ -696,6 +720,11 @@ impl AsrConfig {
                     && !self.stepaudio_model.trim().is_empty()
                     && !self.stepaudio_base_url.trim().is_empty()
             }
+            AsrProviderType::Mimo => {
+                !self.mimo_api_key.trim().is_empty()
+                    && !self.mimo_model.trim().is_empty()
+                    && !self.mimo_base_url.trim().is_empty()
+            }
             AsrProviderType::Coli => {
                 crate::asr::resolve_coli_command(&self.coli_command_path).is_some()
             }
@@ -739,6 +768,28 @@ mod tests {
         assert!(config.capabilities().supports_batch);
         assert!(!config.capabilities().supports_realtime);
         assert_eq!(config.max_recording_minutes_limit(), Some(30));
+    }
+
+    #[test]
+    fn mimo_pipeline_mode_is_batch_only() {
+        let mut config = AsrConfig::default();
+        config.provider_type = AsrProviderType::Mimo;
+
+        assert_eq!(config.pipeline_mode(), AsrPipelineMode::Batch);
+        assert!(config.capabilities().supports_batch);
+        assert!(!config.capabilities().supports_realtime);
+        assert!(!config.capabilities().supports_realtime_with_final_pass);
+        assert_eq!(config.max_recording_minutes_limit(), None);
+    }
+
+    #[test]
+    fn mimo_requires_api_key_model_and_base_url() {
+        let mut config = AsrConfig::default();
+        config.provider_type = AsrProviderType::Mimo;
+        assert!(!config.is_valid());
+
+        config.mimo_api_key = "key".to_string();
+        assert!(config.is_valid());
     }
 
     #[test]

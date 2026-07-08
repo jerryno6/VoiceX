@@ -1,6 +1,6 @@
 [package]
 name = "voicex"
-version = "0.10.0"
+version = "0.11.0"
 description = "Cross-platform voice input application with ASR"
 authors = ["VoiceX Contributors"]
 license = "MIT"
@@ -97,3 +97,9 @@ objc2-foundation = { version = "0.3", features = ["NSString", "NSURL"] }
 [target.'cfg(target_os = "windows")'.dependencies]
 # Windows specific - SendInput API for direct unicode injection
 windows-sys = { version = "0.59", features = ["Win32_UI_Input_KeyboardAndMouse", "Win32_UI_WindowsAndMessaging", "Win32_Foundation", "Win32_System_Threading"] }
+
+# MP3 encoding for MiMo batch ASR. Excluded on Windows: mp3lame-sys builds
+# libmp3lame via autotools, which is unreliable on the GitHub Actions Windows
+# runners. Windows falls back to 16 kHz mono WAV (see asr/mimo_client.rs).
+[target.'cfg(not(target_os = "windows"))'.dependencies]
+mp3lame-encoder = "0.2.4"

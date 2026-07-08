@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.11.0] - 2026-07-07
+
+### Added
+- **Xiaomi MiMo ASR** — added MiMo (`mimo-v2.5-asr`) batch transcription via its OpenAI-compatible chat/completions endpoint, including API key/model/base-URL/language settings, provider selection, history metadata, and the provider probe. The recording is compressed to MP3 on macOS/Linux (or WAV on Windows) so it fits the service's 10 MB input limit.
+- **Multiple named custom LLM endpoints** — the custom LLM provider can now store and switch between several named endpoints, and existing single-endpoint configs are migrated automatically at startup.
+
+### Changed
+- Expanded VoiceX from twelve to thirteen ASR backends.
+
+### Fixed
+- The LLM correction timeout now scales with input length, so longer transcripts are less likely to time out prematurely.
+
 ## [0.10.0] - 2026-04-26
 
 ### Added

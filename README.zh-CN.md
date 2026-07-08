@@ -15,7 +15,7 @@ VoiceX 是一个跨平台桌面语音输入工具。整体处理链路为：录�
 ## 亮点
 
 - **跨平台** — 同时支持 macOS 和 Windows，使用平台原生热键捕获、托盘图标和文本注入。
-- **多 ASR 后端** — 在十二种云端和本地语音识别引擎间自由切换，兼顾准确率、延迟、语种覆盖和隐私。
+- **多 ASR 后端** — 在十三种云端和本地语音识别引擎间自由切换，兼顾准确率、延迟、语种覆盖和隐私。
 - **一键多用** — 单个全局热键驱动三种交互模式：轻点启动免提听写、长按进入按住说话、双击触发翻译。
 - **实时 HUD 浮层** — 轻量置顶窗口，实时显示转写文本、录音模式、倒计时和处理状态；在 macOS 多桌面场景下也会跟随当前活跃 Space 显示，不打断当前工作流。
 - **LLM 后处理** — 可选将 ASR 输出交给大模型做纠错、翻译或润色，支持自定义 prompt 模板和词典上下文注入。
@@ -48,6 +48,7 @@ VoiceX 通过一个可配置的全局热键映射三种不同意图：
 | Cohere Audio Transcription | 云端批量文件识别 | `cohere-transcribe-03-2026`；整段音频上传识别，需显式指定 ISO-639-1 语言码 |
 | Soniox Realtime | 云端流式 (WebSocket) | `stt-rt-v4`；基于 token 的流式识别，支持热词和语言提示 |
 | StepAudio 2.5 ASR | 云端批量文件识别 (HTTP + SSE) | 阶跃星辰；`stepaudio-2.5-asr`；录音结束后上传整段音频，支持最长 30 分钟与 SSE 增量返回 |
+| 小米 MiMo ASR | 云端批量文件识别 (HTTP + JSON) | 小米；`mimo-v2.5-asr`；OpenAI 兼容的 chat/completions 接口；录音结束后上传整段音频，压缩为 MP3（macOS/Linux）或 WAV（Windows）以满足 10 MB 输入上限 |
 | OpenAI ASR | 云端批量 / 流式 (WebSocket) | `gpt-4o-transcribe`；双模式——批量文件上传或实时 WebSocket 流式识别（含 VAD） |
 | ElevenLabs Speech-to-Text | 云端流式 / 批量文件识别 | `scribe_v2_realtime` / `scribe_v2`；支持实时识别、整段批量转录，以及录音结束后的 batch refine |
 | [Coli](https://www.npmjs.com/package/@marswave/coli) | 本地离线 | 基于 SenseVoice / Whisper，需通过 npm 单独安装 |

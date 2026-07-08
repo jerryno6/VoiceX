@@ -5,11 +5,20 @@ import type { UiLanguage } from '../i18n'
 import { getDefaultPrompt } from '../utils/llmPrompts'
 import type { LlmApiModeValue, LlmProviderValue } from '../utils/llmOptions'
 
+export interface CustomLlmEndpoint {
+    id: string
+    name: string
+    baseUrl: string
+    apiKey: string
+    model: string
+    apiMode: LlmApiModeValue
+}
+
 export interface AppSettings {
     uiLanguage: UiLanguage
 
     // ASR
-    asrProviderType: 'volcengine' | 'google' | 'funasr' | 'qwen' | 'gemini' | 'gemini-live' | 'cohere' | 'openai' | 'elevenlabs' | 'soniox' | 'stepaudio' | 'coli'
+    asrProviderType: 'volcengine' | 'google' | 'funasr' | 'qwen' | 'gemini' | 'gemini-live' | 'cohere' | 'openai' | 'elevenlabs' | 'soniox' | 'stepaudio' | 'mimo' | 'coli'
     asrAppKey: string
     asrAccessKey: string
     asrResourceId: string
@@ -83,6 +92,12 @@ export interface AppSettings {
     stepaudioBaseUrl: string
     stepaudioLanguage: 'auto' | 'zh' | 'en' | ''
 
+    // ASR Provider: Xiaomi MiMo
+    mimoApiKey: string
+    mimoModel: string
+    mimoBaseUrl: string
+    mimoLanguage: 'auto' | 'zh' | 'en' | ''
+
     // LLM
     enableLlmCorrection: boolean
     llmProviderType: LlmProviderValue
@@ -110,11 +125,9 @@ export interface AppSettings {
     llmQwenApiKey: string
     llmQwenModel: string
 
-    // LLM Provider: Custom
-    llmCustomBaseUrl: string
-    llmCustomApiKey: string
-    llmCustomModel: string
-    llmCustomApiMode: LlmApiModeValue
+    // LLM Provider: Custom (multiple named OpenAI-compatible endpoints)
+    llmCustomEndpoints: CustomLlmEndpoint[]
+    llmActiveCustomEndpointId: string
 
     // Hotkey
     hotkeyConfig: string | null
@@ -257,6 +270,10 @@ const defaultSettings: AppSettings = {
     stepaudioModel: 'stepaudio-2.5-asr',
     stepaudioBaseUrl: 'https://api.stepfun.com/v1',
     stepaudioLanguage: 'auto',
+    mimoApiKey: '',
+    mimoModel: 'mimo-v2.5-asr',
+    mimoBaseUrl: 'https://api.xiaomimimo.com/v1',
+    mimoLanguage: 'auto',
 
     enableLlmCorrection: false,
     llmProviderType: 'volcengine',
@@ -281,10 +298,8 @@ const defaultSettings: AppSettings = {
     llmQwenApiKey: '',
     llmQwenModel: 'qwen3.5-flash',
 
-    llmCustomBaseUrl: '',
-    llmCustomApiKey: '',
-    llmCustomModel: '',
-    llmCustomApiMode: 'chat_completions',
+    llmCustomEndpoints: [],
+    llmActiveCustomEndpointId: '',
 
     hotkeyConfig: null,
     holdThresholdMs: 1000,
